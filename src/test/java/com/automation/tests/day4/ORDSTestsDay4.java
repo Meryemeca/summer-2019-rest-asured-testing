@@ -34,6 +34,9 @@ public class ORDSTestsDay4 {
      * And Content type is application/json
      * And response time is less than 3 seconds
      */
+
+
+
     @Test
     @DisplayName("Verify that response time is less than 3 seconds")
     public void test1() {
@@ -60,6 +63,8 @@ public class ORDSTestsDay4 {
     And Content type is application/json
     And country_name from payload is "United States of America"
  */
+
+
     @Test
     @DisplayName("Verify that country_name from payload is \"United States of America\"")
     public void test2() {
@@ -89,7 +94,7 @@ public class ORDSTestsDay4 {
         //if I don't put index, I will get collection of properties (only if they exists)
         List<?> links = jsonPath.getList("items.links.href");
 
-        for (Object link : links) {
+        for(Object link: links){
             System.out.println(link);
         }
 
@@ -97,7 +102,7 @@ public class ORDSTestsDay4 {
 
     @Test
     @DisplayName("Verify that payload contains only 25 countries")
-    public void test4() {
+    public void test4(){
         List<?> countries = given().
                 accept(ContentType.JSON).
                 when().
@@ -112,11 +117,12 @@ public class ORDSTestsDay4 {
      * when user makes get request
      * then assert that status code is 200
      * and user verifies that body returns following country names
-     * |Argentina                |
-     * |Brazil                   |
-     * |Canada                   |
-     * |Mexico                   |
-     * |United States of America |
+     *  |Argentina                |
+     *  |Brazil                   |
+     *  |Canada                   |
+     *  |Mexico                   |
+     *  |United States of America |
+     *
      */
 //to switch to java 9, add/replace it in pom.xml:
 
@@ -132,6 +138,7 @@ public class ORDSTestsDay4 {
 //            </plugin>
 //        </plugins>
 //    </build>
+
     @Test
     @DisplayName("Verify that payload contains following countries")
     public void test5() {
@@ -154,7 +161,7 @@ public class ORDSTestsDay4 {
                 queryParam("q", "{\"region_id\":\"2\"}").
                 when().
                 get("/countries").
-                then().assertThat().body("items.country_name", contains("Argentina", "Brazil", "Canada", "Mexico", "United States of America"));
+                then().assertThat().body("items.country_name" , contains("Argentina", "Brazil", "Canada", "Mexico", "United States of America"));
     }
 
     /**
@@ -162,10 +169,11 @@ public class ORDSTestsDay4 {
      * when user makes get request
      * then assert that status code is 200
      * Then user verifies that every employee has positive salary
+     *
      */
     @Test
     @DisplayName("Verify that every employee has positive salary")
-    public void test6() {
+    public void test6(){
         given().
                 accept(ContentType.JSON).
                 when().
@@ -192,11 +200,12 @@ public class ORDSTestsDay4 {
      * when user makes get request
      * then assert that status code is 200
      * and verifies that phone number is 515-123-4568
+     *
      */
 
     @Test
     @DisplayName("Verify that employee 101 has following phone number: 515-123-4568")
-    public void test7() {
+    public void test7(){
         Response response = given().
                 accept(ContentType.JSON).
                 when().
@@ -215,41 +224,94 @@ public class ORDSTestsDay4 {
      * when user makes get request
      * then assert that status code is 200
      * and verify that body returns following salary information after sorting from higher to lower
-     * 24000, 17000, 17000, 12008, 11000,
-     * 9000, 9000, 8200, 8200, 8000,
-     * 7900, 7800, 7700, 6900, 6500,
-     * 6000, 5800, 4800, 4800, 4200,
-     * 3100, 2900, 2800, 2600, 2500
+     *  24000, 17000, 17000, 12008, 11000,
+     *  9000, 9000, 8200, 8200, 8000,
+     *  7900, 7800, 7700, 6900, 6500,
+     *  6000, 5800, 4800, 4800, 4200,
+     *  3100, 2900, 2800, 2600, 2500
+     *
      */
-    @DisplayName("verify that body returns following salary information after sorting from higher to lower")
+
     @Test
-    public void test8() {
-
-        List<Integer> expectedSalaries = List.of(   24000, 17000, 17000, 12008, 11000,
-                                                    9000, 9000, 8200, 8200, 8000,
-                                                    7900, 7800, 7700, 6900, 6500,
-                                                    6000, 5800, 4800, 4800, 4200,
-                                                    3100, 2900, 2800, 2600, 2500 );
-
+    @DisplayName("verify that body returns following salary information after sorting from higher to lower(after sorting it in descending order)")
+    public void test8(){
+        List<Integer> expectedSalaries = List.of(24000, 17000, 17000, 12008, 11000,
+                9000, 9000, 8200, 8200, 8000,
+                7900, 7800, 7700, 6900, 6500,
+                6000, 5800, 4800, 4800, 4200,
+                3100, 2900, 2800, 2600, 2500);
         Response response = given().
-                    accept(ContentType.JSON).
+                accept(ContentType.JSON).
                 when().
-                    get("/employees");
-
+                get("/employees");
         assertEquals(200, response.statusCode());
 
-
-        // String.class is enforce to make String
         List<Integer> actualSalaries = response.jsonPath().getList("items.salary");
-        Collections.sort(actualSalaries,Collections.reverseOrder());
+
+        Collections.sort(actualSalaries, Collections.reverseOrder());
+
         System.out.println(actualSalaries);
-        assertEquals(expectedSalaries,actualSalaries,"Salaries are not matching");
 
-       // Collections.sort(actualSalaries, Collections.reverseOrder());
-
-
+        assertEquals(expectedSalaries, actualSalaries, "Salaries are not matching");
     }
 
 
-}
+    /** ####TASK#####
+     *  Given accept type as JSON
+     *  And path parameter is id with value 2900
+     *  When user sends get request to /locations/{id}
+     *  Then user verifies that status code is 200
+     *  And user verifies following json path contains following entries:
+     *      |street_address         |city  |postal_code|country_id|state_province|
+     *      |20 Rue des Corps-Saints|Geneva|1730       |CH        |Geneve        |
+     *
+     */
 
+    /**
+     *     "location_id": 2900,
+     *     "street_address": "20 Rue des Corps-Saints",
+     *     "postal_code": "1730",
+     *     "city": "Geneva",
+     *     "state_province": "Geneve",
+     *     "country_id": "CH",
+     */
+    @Test
+    @DisplayName("Verify that JSON body has following entries")
+    public void test9(){
+        given().
+                accept(ContentType.JSON).
+                pathParam("id", 2900).
+                when().
+                get("/locations/{id}").
+                then().
+                assertThat().
+                statusCode(200).
+                body("", hasEntry("street_address", "20 Rue des Corps-Saints")).
+                body("", hasEntry("city", "Geneva")).
+                body("", hasEntry("postal_code", "1730")).
+                body("", hasEntry("country_id", "CH")).
+                body("", hasEntry("state_province", "Geneve")).
+                log().all(true);
+
+    }
+
+    @Test
+    @DisplayName("Verify that JSON body has following entries")
+    public void test9_2(){
+        given().
+                accept(ContentType.JSON).
+                pathParam("id", 2900).
+                when().
+                get("/locations/{id}").
+                then().
+                assertThat().
+                statusCode(200).
+                body("street_address", is("20 Rue des Corps-Saints")).
+                body("city", is("Geneva")).
+                body("postal_code", is("1730")).
+                body("country_id", is("CH")).
+                body("state_province", is("Geneve")).
+                log().all(true);
+    }
+
+}

@@ -35,11 +35,11 @@ public class ORDSTests {
     public void test1() {
         Response response = given().get(baseURI + "/employees");
 
-      // System.out.println(response.getBody().asString());
+//        System.out.println(response.getBody().asString());
 
         assertEquals(200, response.getStatusCode());
 
-      response.prettyPrint();
+        response.prettyPrint();
     }
 
     //#TASK: get employee with id 100 and verify that response returns status code 200
@@ -73,9 +73,7 @@ public class ORDSTests {
         for(Header h: response.getHeaders()){
             System.out.println(h);
         }
-
-
         System.out.println("##########################");
-        response.prettyPrint();
+        System.out.println(response.prettyPrint());
     }
 }
